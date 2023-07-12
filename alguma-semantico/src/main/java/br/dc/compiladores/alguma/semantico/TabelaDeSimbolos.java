@@ -9,16 +9,19 @@ public class TabelaDeSimbolos {
         INTEIRO,
         REAL,
         LOGICO,
+        ENDERECO,
         INVALIDO
     }
     
     class EntradaTabelaDeSimbolos {
         String nome;
         TipoAlguma tipo;
+        boolean ehPonteiro;
 
-        private EntradaTabelaDeSimbolos(String nome, TipoAlguma tipo) {
+        private EntradaTabelaDeSimbolos(String nome, TipoAlguma tipo, boolean ehPonteiro) {
             this.nome = nome;
             this.tipo = tipo;
+            this.ehPonteiro = ehPonteiro;
         }
     }
     
@@ -28,8 +31,8 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, TipoAlguma tipo) {
-        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo));
+    public void adicionar(String nome, TipoAlguma tipo, boolean ehPonteiro) {
+        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, ehPonteiro));
     }
     
     public boolean existe(String nome) {
@@ -38,5 +41,9 @@ public class TabelaDeSimbolos {
     
     public TipoAlguma verificar(String nome) {
         return tabela.get(nome).tipo;
+    }
+
+    public boolean verificarPonteiro(String nome){
+        return tabela.get(nome).ehPonteiro;
     }
 }

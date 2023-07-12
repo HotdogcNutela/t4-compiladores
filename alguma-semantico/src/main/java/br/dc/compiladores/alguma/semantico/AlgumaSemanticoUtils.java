@@ -19,7 +19,11 @@ public class AlgumaSemanticoUtils {
         if (tipoVar.equals("literal") || 
             tipoVar.equals("inteiro") || 
             tipoVar.equals("real") || 
-            tipoVar.equals("logico"))
+            tipoVar.equals("logico") ||
+            tipoVar.equals("^literal") ||
+            tipoVar.equals("^inteiro") ||
+            tipoVar.equals("^real") ||
+            tipoVar.equals("^logico"))
         {
             return true;
         }
@@ -48,6 +52,7 @@ public class AlgumaSemanticoUtils {
         return false;
     }
 
+    // verificarTipo para expressão
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.ExpressaoContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
         for (var tl : ctx.termo_logico()) {
@@ -63,6 +68,7 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
+    // verificarTipo para termo_logico
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Termo_logicoContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
         for (var fl : ctx.fator_logico()) {
@@ -78,10 +84,12 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
+    // verificarTipo para fator_logico
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Fator_logicoContext ctx){
         return verificarTipo(pilhaDeTabelas, ctx.parcela_logica());
     }
 
+    // verificarTipo para parcela_logica
     public static TipoAlguma verificarTipo(Escopos pilhaDetabelas, AlgumaParser.Parcela_logicaContext ctx){
         if (ctx.pl1 != null){
             return TipoAlguma.LOGICO;
@@ -90,6 +98,7 @@ public class AlgumaSemanticoUtils {
         }
     }
 
+    // verificarTipo para exp_relacional
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Exp_relacionalContext ctx){
         if (ctx.op_relacional() != null){
             return TipoAlguma.LOGICO;
@@ -98,6 +107,7 @@ public class AlgumaSemanticoUtils {
         }
     }
 
+    // verificarTipo para exp_aritmetica
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Exp_aritmeticaContext ctx) {
         TabelaDeSimbolos.TipoAlguma ret = null;
         for (var ta : ctx.termo()) {
@@ -116,6 +126,7 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
+    // verificarTipo para termo
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.TermoContext ctx) {
         TabelaDeSimbolos.TipoAlguma ret = null;
 
@@ -134,6 +145,7 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
 
+    // verificarTipo para fator
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.FatorContext ctx){
         TabelaDeSimbolos.TipoAlguma ret = null;
 
@@ -152,6 +164,7 @@ public class AlgumaSemanticoUtils {
         return ret;
     }
     
+    // verificarTipo para parcela
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.ParcelaContext ctx){
         if (ctx.parcela_unario() != null){
             return verificarTipo(pilhaDeTabelas, ctx.parcela_unario());
@@ -160,14 +173,22 @@ public class AlgumaSemanticoUtils {
         }
     }
 
+    // verificarTipo para parcela_nao_unario
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Parcela_nao_unarioContext ctx){
         if (ctx.pn1 != null){
+            String strVar = ctx.getText();
+            boolean ehEndereco = strVar.startsWith("&");
+            
+            if (ehEndereco){
+                return TipoAlguma.ENDERECO;
+            }
             return verificarTipo(pilhaDeTabelas.obterEscopoAtual(), ctx.pn1.getText());
         } else{ // ctx.pn2 != null
             return TipoAlguma.LITERAL;
         }
     }
 
+    // verificarTipo para parcela_unario
     public static TipoAlguma verificarTipo(Escopos pilhaDeTabelas, AlgumaParser.Parcela_unarioContext ctx){
         if (ctx.p1 != null){
             String nomeId = ctx.p1.getText();
@@ -204,6 +225,7 @@ public class AlgumaSemanticoUtils {
         return verificarTipo(pilhaDeTabelas, ctx.p5);
     }
 
+    // verificarTipo para identidade
     public static TabelaDeSimbolos.TipoAlguma verificarTipo(TabelaDeSimbolos tabela, String nomeVar) {
         return tabela.verificar(nomeVar);
     }

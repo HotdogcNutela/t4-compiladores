@@ -26,6 +26,10 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
     public Void visitDeclaracao_local(AlgumaParser.Declaracao_localContext ctx){
         if (ctx.v1 != null){
             String srtTipoVar = ctx.v1.tipo().getText();
+            boolean ehPonteiro = srtTipoVar.startsWith("^");
+            if (ehPonteiro){
+                srtTipoVar = srtTipoVar.substring(1);
+            }
             TabelaDeSimbolos escopoAtual = pilhaDeTabelas.obterEscopoAtual();
             if (!AlgumaSemanticoUtils.ehTipoBasico(srtTipoVar)){
                 // Reporta erro de tipo inexistente
@@ -56,7 +60,7 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
                     erroSemantico = "identificador "+v.getText()+" ja declarado anteriormente";
                     AlgumaSemanticoUtils.adicionarErroSemantico(v.start, erroSemantico);
                 } else{
-                    escopoAtual.adicionar(v.getText(), tipoVar);
+                    escopoAtual.adicionar(v.getText(), tipoVar, ehPonteiro);
                 }
             }
         } else if (ctx.v2 != null){
@@ -101,13 +105,26 @@ public class AlgumaSemantico extends AlgumaBaseVisitor<Void> {
     @Override
     public Void visitCmdAtribuicao(AlgumaParser.CmdAtribuicaoContext ctx)
     { 
+        String strVar = ctx.identificador().getText();
         TipoAlguma tipoExpressao = AlgumaSemanticoUtils.verificarTipo(pilhaDeTabelas, ctx.expressao());
-        TipoAlguma tipoId = pilhaDeTabelas.obterEscopoAtual().verificar(ctx.identificador().getText());
+        TipoAlguma tipoId = pilhaDeTabelas.obterEscopoAtual().verificar(strVar);
+        boolean ehPonteiro = pilhaDeTabelas.obterEscopoAtual().verificarPonteiro(strVar);
+        boolean temSinalPonteiro = ctx.getText().startsWith("^");
+        
+        // Verifica se strVar é endereço de ponteiro
+        if (ehPonteiro && !temSinalPonteiro){
+            tipoId = TipoAlguma.ENDERECO;
+        }
 
+        //erroSemantico = strVar+" <- "+tipoExpressao;
+        //AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
         if (tipoExpressao.equals(tipoId) || AlgumaSemanticoUtils.ehTipoInteiroEmReal(tipoId, tipoExpressao)){
             return null;
         } else{
-            erroSemantico = "atribuicao nao compativel para "+ctx.identificador().getText();
+            if (temSinalPonteiro){
+                strVar = "^"+strVar;
+            }
+            erroSemantico = "atribuicao nao compativel para "+strVar;
             AlgumaSemanticoUtils.adicionarErroSemantico(ctx.start, erroSemantico);
         }
 
