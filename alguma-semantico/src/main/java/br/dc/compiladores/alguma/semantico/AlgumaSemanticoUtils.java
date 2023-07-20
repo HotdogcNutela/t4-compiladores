@@ -19,11 +19,7 @@ public class AlgumaSemanticoUtils {
         if (tipoVar.equals("literal") || 
             tipoVar.equals("inteiro") || 
             tipoVar.equals("real") || 
-            tipoVar.equals("logico") ||
-            tipoVar.equals("^literal") ||
-            tipoVar.equals("^inteiro") ||
-            tipoVar.equals("^real") ||
-            tipoVar.equals("^logico"))
+            tipoVar.equals("logico"))
         {
             return true;
         }

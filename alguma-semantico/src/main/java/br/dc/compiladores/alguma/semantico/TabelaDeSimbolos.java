@@ -10,18 +10,29 @@ public class TabelaDeSimbolos {
         REAL,
         LOGICO,
         ENDERECO,
+        REGISTRO,
         INVALIDO
+    }
+
+    public enum TipoEntrada{
+        VARIAVEL,
+        TIPO
     }
     
     class EntradaTabelaDeSimbolos {
         String nome;
         TipoAlguma tipo;
         boolean ehPonteiro;
+        TabelaDeSimbolos registro;
+        TipoEntrada tipoEntrada;
 
-        private EntradaTabelaDeSimbolos(String nome, TipoAlguma tipo, boolean ehPonteiro) {
+        private EntradaTabelaDeSimbolos(String nome, TipoAlguma tipo, boolean ehPonteiro,
+                                        TabelaDeSimbolos registro, TipoEntrada tipoEntrada) {
             this.nome = nome;
             this.tipo = tipo;
             this.ehPonteiro = ehPonteiro;
+            this.registro = registro;
+            this.tipoEntrada = tipoEntrada;
         }
     }
     
@@ -31,8 +42,9 @@ public class TabelaDeSimbolos {
         this.tabela = new HashMap<>();
     }
     
-    public void adicionar(String nome, TipoAlguma tipo, boolean ehPonteiro) {
-        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, ehPonteiro));
+    public void adicionar(String nome, TipoAlguma tipo, boolean ehPonteiro, 
+                            TabelaDeSimbolos registro, TipoEntrada tipoEntrada) {
+        tabela.put(nome, new EntradaTabelaDeSimbolos(nome, tipo, ehPonteiro, registro, tipoEntrada));
     }
     
     public boolean existe(String nome) {
@@ -45,5 +57,9 @@ public class TabelaDeSimbolos {
 
     public boolean verificarPonteiro(String nome){
         return tabela.get(nome).ehPonteiro;
+    }
+
+    public TabelaDeSimbolos verificarRegistro(String nome){
+        return tabela.get(nome).registro;
     }
 }

@@ -486,6 +486,7 @@ public class AlgumaParser extends Parser {
 	}
 
 	public static class TipoContext extends ParserRuleContext {
+		public RegistroContext reg;
 		public RegistroContext registro() {
 			return getRuleContext(RegistroContext.class,0);
 		}
@@ -509,7 +510,7 @@ public class AlgumaParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(157);
-				registro();
+				((TipoContext)_localctx).reg = registro();
 				}
 				break;
 			case T__11:
